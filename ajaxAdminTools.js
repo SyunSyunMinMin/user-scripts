@@ -478,11 +478,7 @@ $(function() {
       setProtectOpt();
     });
     function setProtectOpt(){
-      var target = $( '#ajxATdialog-target-page' ).val(),
-        mode = $( '#ajxATdialog-mode' ).val();
-      if (mode != 'protect') {
-        return;
-      }
+      var target = $( '#ajxATdialog-target-page' ).val();
       AjxAT.Api.get({
       	"action": "query",
       	"format": "json",
