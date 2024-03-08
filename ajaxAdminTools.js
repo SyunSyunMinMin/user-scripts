@@ -266,8 +266,8 @@ $(function() {
       <tr><td nowrap><label for='ajxATdialog-block-opt-hard'>${$.i18n( 'ajxATdialog-block-opt-hard' )}</label></td><td><input type='checkbox' id='ajxATdialog-block-opt-hard' class='ajxATdialog-input' /></td></tr>
       <tr><td nowrap><label for='ajxATdialog-block-revdeluser'>${$.i18n( 'ajxATdialog-block-revdeluser' ) + '(beta)'}</label></td><td><input type='checkbox' id='ajxATdialog-block-revdeluser' class='ajxATdialog-input' /></td></tr>
       <tr id='ajxATdialog-block-revdeluser-reasonfield' style='display:none;'><td nowrap><label for='ajxATdialog-block-revdeluser-reason'>${$.i18n( 'ajxATdialog-block-revdeluser-reason' )}</label></td><td><select id='ajxATdialog-block-revdeluser-reason' class='ajxATdialog-input'>${reasons_revdel}</select><br /><input type='text' id='ajxATdialog-block-revdeluser-reason-other' class='ajxATdialog-input' /></td></tr>
-      <tr><td nowrap><label for='ajxATdialog-block-expiration'>${$.i18n( 'ajxATdialog-expiration' )}</label></td><td><select id='ajxATdialog-block-expiration' class='ajxATdialog-input'>${options_block}</select><input type='text' id='ajxATdialog-block-expiration-other' class='ajxATdialog-input' /></td></tr>
-      <tr><td nowrap><label for='ajxATdialog-block-reason'>${$.i18n( 'ajxATdialog-reason' )}</label></td><td><select id='ajxATdialog-block-reason' class='ajxATdialog-input'>${reasons_block}</select><br /><input type='text' id='ajxATdialog-block-reason-other' style='width:80%;' class='ajxATdialog-input' /></td></tr>
+      <tr><td nowrap><label for='ajxATdialog-block-expiration'>${$.i18n( 'ajxATdialog-expiration' )}</label></td><td><select id='ajxATdialog-block-expiration' name='block' class='ajxATdialog-input ajxATdialog-expiration'>${options_block}</select><input type='text' id='ajxATdialog-block-expiration-other' class='ajxATdialog-input' disabled /></td></tr>
+      <tr><td nowrap><label for='ajxATdialog-block-reason'>${$.i18n( 'ajxATdialog-reason' )}</label></td><td><select id='ajxATdialog-block-reason' class='ajxATdialog-input ajxATdialog-expiration'>${reasons_block}</select><br /><input type='text' id='ajxATdialog-block-reason-other' style='width:80%;' class='ajxATdialog-input' /></td></tr>
     </div>`;
     var content_delete = `<div id='ajxATdialog-delete' style='display:none;'>
       <div style="text-align:center;"><span style="font-weight: bold;">${$.i18n( 'ajxATdialog-delete-caption' )}</span></div>
@@ -277,11 +277,11 @@ $(function() {
     var content_protect = `<div id='ajxATdialog-protect' style='display:none;'>
       <div style="text-align:center;"><span style="font-weight: bold;">${$.i18n( 'ajxATdialog-protect-caption' )}</span></div>
       <tr><td><table style='width: 100%;' border=1 frame="box"rules="none"><tr><td nowrap><label for='ajxATdialog-protect-restr-edit'>${$.i18n( 'ajxATdialog-protect-restr-edit' )}</label></td><td><select id='ajxATdialog-protect-restr-edit' class='ajxATdialog-input ajxATdialog-input-protect'><option value='all'>${$.i18n( 'ajxATdialog-protect-level-all' )}</option><option value='autoconfirmed'>${$.i18n( 'ajxATdialog-protect-level-autoconfirmed' )}</option><option value='sysop'>${$.i18n( 'ajxATdialog-protect-level-sysop' )}</option></select></td></tr>
-      <tr><td nowrap><label for='ajxATdialog-protect-expiration-edit'>${$.i18n( 'ajxATdialog-expiration' )}</label></td><td><select id='ajxATdialog-protect-expiration-edit' class='ajxATdialog-input ajxATdialog-input-protect'>${options_protect}</select><input type='text' id='ajxATdialog-protect-expiration-edit-other' class='ajxATdialog-input ajxATdialog-input-protect' /></td></tr></table>
+      <tr><td nowrap><label for='ajxATdialog-protect-expiration-edit'>${$.i18n( 'ajxATdialog-expiration' )}</label></td><td><select id='ajxATdialog-protect-expiration-edit' name='edit' class='ajxATdialog-input ajxATdialog-input-protect ajxATdialog-expiration'>${options_protect}</select><input type='text' id='ajxATdialog-protect-expiration-edit-other' class='ajxATdialog-input ajxATdialog-input-protect' disabled /></td></tr></table>
       <table style='width: 100%;' border=1 frame="box"rules="none"><tr><td nowrap><label for='ajxATdialog-protect-restr-move'>${$.i18n( 'ajxATdialog-protect-restr-move' )}</label></td><td><select id='ajxATdialog-protect-restr-move' class='ajxATdialog-input ajxATdialog-input-protect'><option value='all'>${$.i18n( 'ajxATdialog-protect-level-all' )}</option><option value='autoconfirmed'>${$.i18n( 'ajxATdialog-protect-level-autoconfirmed' )}</option><option value='sysop'>${$.i18n( 'ajxATdialog-protect-level-sysop' )}</option></select></td></tr>
-      <tr><td nowrap><label for='ajxATdialog-protect-expiration-move'>${$.i18n( 'ajxATdialog-expiration' )}</label></td><td><select id='ajxATdialog-protect-expiration-move' class='ajxATdialog-input ajxATdialog-input-protect'>${options_protect}</select><input type='text' id='ajxATdialog-protect-expiration-move-other' class='ajxATdialog-input ajxATdialog-input-protect' /></td></tr></table>
+      <tr><td nowrap><label for='ajxATdialog-protect-expiration-move'>${$.i18n( 'ajxATdialog-expiration' )}</label></td><td><select id='ajxATdialog-protect-expiration-move' name='move' class='ajxATdialog-input ajxATdialog-input-protect ajxATdialog-expiration'>${options_protect}</select><input type='text' id='ajxATdialog-protect-expiration-move-other' class='ajxATdialog-input ajxATdialog-input-protect' disabled /></td></tr></table>
       <table style='width: 100%;' border=1 frame="box"rules="none"><tr><td nowrap><label for='ajxATdialog-protect-restr-create'>${$.i18n( 'ajxATdialog-protect-restr-create' )}</label></td><td><select id='ajxATdialog-protect-restr-create' class='ajxATdialog-input ajxATdialog-input-protect'><option value='all'>${$.i18n( 'ajxATdialog-protect-level-all' )}</option><option value='autoconfirmed'>${$.i18n( 'ajxATdialog-protect-level-autoconfirmed' )}</option><option value='sysop'>${$.i18n( 'ajxATdialog-protect-level-sysop' )}</option></select></td></tr>
-      <tr><td nowrap><label for='ajxATdialog-protect-expiration-create'>${$.i18n( 'ajxATdialog-expiration' )}</label></td><td><select id='ajxATdialog-protect-expiration-create' class='ajxATdialog-input ajxATdialog-input-protect'>${options_protect}</select><input type='text' id='ajxATdialog-protect-expiration-create-other' class='ajxATdialog-input ajxATdialog-input-protect' /></td></tr></table>
+      <tr><td nowrap><label for='ajxATdialog-protect-expiration-create'>${$.i18n( 'ajxATdialog-expiration' )}</label></td><td><select id='ajxATdialog-protect-expiration-create' name='create' class='ajxATdialog-input ajxATdialog-input-protect ajxATdialog-expiration'>${options_protect}</select><input type='text' id='ajxATdialog-protect-expiration-create-other' class='ajxATdialog-input ajxATdialog-input-protect' disabled /></td></tr></table>
       <table style='width: 100%;'>
       <tr><td nowrap><label for='ajxATdialog-protect-reason'>${$.i18n( 'ajxATdialog-reason' )}</label></td><td><select id='ajxATdialog-protect-reason' class='ajxATdialog-input'>${reasons_protect}</select><br /><input type='text' id='ajxATdialog-protect-reason-other' style='width:80%;' class='ajxATdialog-input' /></td></tr>
     </div>`;
@@ -441,12 +441,30 @@ $(function() {
       }
     }
 
+    $('.ajxATdialog-expiration').change(function(){
+      var type = $(this).attr('name'),
+        element;
+      switch (type) {
+        case "block":
+          element = "#ajxATdialog-block-expiration-other"
+          break;
+        default:
+          element = `#ajxATdialog-protect-expiration-${type}-other`
+      }
+      if ($(this).val() == "other") {
+        $(element).prop("disabled", false);
+      } else {
+        $(element).prop("disabled", true);
+      }
+    });
+
     /* IP/アカウント判定 */
     $( '#ajxATdialog-target-user' ).change(function(){
       setBlockOpt();
     });
     function setBlockOpt() {
       var target = $( '#ajxATdialog-target-user' ).val();
+      if ($("#ajxATdialog-block-expiration").val() !== "other") $("#ajxATdialog-block-expiration-other").prop("disabled", true);
       if (!target) {
         $("#ajxATdialog-block-opt-auto").prop("disabled", false);
         $("#ajxATdialog-block-opt-hard").prop("disabled", false);
@@ -503,9 +521,9 @@ $(function() {
         });
 
         types.forEach((u) => {
-          $("#ajxATdialog-protect-restr-" + u).prop("disabled", false);
-          $("#ajxATdialog-protect-expiration-" + u).prop("disabled", false);
-          $("#ajxATdialog-protect-expiration-" + u + "-other").prop("disabled", false);
+          $(`#ajxATdialog-protect-restr-${u}`).prop("disabled", false);
+          $(`#ajxATdialog-protect-expiration-${u}`).prop("disabled", false);
+          if ($(`#ajxATdialog-protect-expiration-${u}`).val() == "other") $(`#ajxATdialog-protect-expiration-${u}-other`).prop("disabled", false);
         });
 
       });
