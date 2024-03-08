@@ -452,10 +452,10 @@ $(function() {
         element;
       switch (type) {
         case "block":
-          element = "#ajxATdialog-block-expiration-other"
+          element = "#ajxATdialog-block-expiration-other";
           break;
         default:
-          element = `#ajxATdialog-protect-expiration-${type}-other`
+          element = `#ajxATdialog-protect-expiration-${type}-other`;
       }
       if ($(this).val() == "other") {
         $(element).prop("disabled", false);
