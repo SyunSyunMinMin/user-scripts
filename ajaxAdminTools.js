@@ -291,7 +291,6 @@ $(function() {
     $( '#ajxATdialog-modefield' ).append(content_delete);
     $( '#ajxATdialog-modefield' ).append(content_protect);
     $( '#ajxATdialog-mode' ).val(AjxAT.DefaultMode);
-    changeMode();
 
     $( '#ajxATDialog' ).dialog({
       autoOpen: false,
@@ -321,6 +320,7 @@ $(function() {
       if (!$(".ajxATdialog-localDropdown").length) {
         localReasons();
         wikisets();
+        changeMode();
       }
 		} );
 
