@@ -446,6 +446,7 @@ $(function() {
       }
     }
 
+    /* その他期間処理 */
     $('.ajxATdialog-expiration').change(function(){
       var type = $(this).attr('name'),
         element;
