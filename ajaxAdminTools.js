@@ -447,6 +447,11 @@ $(function() {
     });
     function setBlockOpt() {
       var target = $( '#ajxATdialog-target-user' ).val();
+      if (!target) {
+        $("#ajxATdialog-block-opt-auto").prop("disabled", false);
+        $("#ajxATdialog-block-opt-hard").prop("disabled", false);
+        return;
+      }
       var short_target = target.replace(/\/\d{1,2}$/, '');
       if (
         mw.util.isIPv4Address( target ) || mw.util.isIPv6Address( target ) ||
