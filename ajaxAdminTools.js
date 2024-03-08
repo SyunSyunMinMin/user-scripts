@@ -327,7 +327,6 @@ $(function() {
     /* モード変更 */
     $( '#ajxATdialog-mode' ).change(function(){
       changeMode();
-      setProtectOpt();
     });
     function changeMode(){
       var mode = $( '#ajxATdialog-mode' ).val();
@@ -356,6 +355,7 @@ $(function() {
           $('#ajxATdialog-protect').removeAttr('style');
           $('#ajxATdialog-block').attr('style', 'display:none;');
           $('#ajxATdialog-delete').attr('style', 'display:none;');
+          setProtectOpt();
           break;
         default:
         return;
