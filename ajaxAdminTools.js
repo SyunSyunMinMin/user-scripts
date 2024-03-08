@@ -271,7 +271,7 @@ $(function() {
     </div>`;
     var content_delete = `<div id='ajxATdialog-delete' style='display:none;'>
       <div style="text-align:center;"><span style="font-weight: bold;">${$.i18n( 'ajxATdialog-delete-caption' )}</span></div>
-      <table style='width: 100%;'>
+      <table style='width: 100%;' border=1 frame="box" rules="none">
       <tr><td nowrap><label for='ajxATdialog-delete-reason'>${$.i18n( 'ajxATdialog-reason' )}</label></td><td><select id='ajxATdialog-delete-reason' class='ajxATdialog-input'>${reasons_delete}</select><br /><input type='text' id='ajxATdialog-delete-reason-other' style='width:80%;' class='ajxATdialog-input' /></td></tr>
     </div>`;
     var content_protect = `<div id='ajxATdialog-protect' style='display:none;'>
