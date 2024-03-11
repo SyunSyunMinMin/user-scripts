@@ -298,14 +298,14 @@ $(function() {
       buttons: [
         {
           text: $.i18n( 'ajxATdialog-cancel' ),
-          class:"ajxATdialog-cancel",
+          class:"ajxATdialog-cancel ajxATdialog-input",
           click: function() {
             $( this ).dialog( "close" );
           }
         },
         {
           text: $.i18n( 'ajxATdialog-execute' ),
-          class:"ajxATdialog-execute",
+          class:"ajxATdialog-execute ajxATdialog-input",
           click: function() {
             execute();
           }
@@ -641,8 +641,7 @@ $(function() {
       if (!$('#ajxATdialog-block-opt-hard').prop('checked')) params.anononly = 1;
       AjxAT.Api.postWithToken( 'csrf', params ).done( function ( data ) {
         showmsg($.i18n( 'ajxATdialog-success-block' ), false, 'block');
-        if ($("#ajxATdialog-block-revdeluser").prop("checked")) rmUserName();
-        input_disability(false);
+        ($("#ajxATdialog-block-revdeluser").prop("checked"))? rmUserName(): input_disability(false);
       } ).fail( function ( data ) {
         showApiErr(params, data, 'block');
         input_disability(false);
@@ -705,50 +704,58 @@ $(function() {
         	for (var l in logs2) {
         		logids2.push(data.query.logevents[l].logid);
         	}
-          if (revids.length) rmUNfromRevs(revids, reason);
-          if (logids1.length) rmUNfromLogs(logids1, reason, 'user', "1");
-          if (logids2.length) rmUNfromLogs(logids2, reason, 'content', "2");
+          Promise.all([
+            ((revids.length)? rmUNfromRevs(revids, reason):""),
+            ((logids1.length)? rmUNfromLogs(logids1, reason, 'user', "1"):""),
+            ((logids2.length)? rmUNfromLogs(logids2, reason, 'content', "2"):""),
+          ]).then(function(data) {
+            input_disability(false);
+          });
         } );
       } );
     }
     function rmUNfromRevs(revids, reason){
-      showmsg($.i18n( 'ajxATdialog-execute-block-revdeluser-revs' ), false, 'revdeluser-revs');
-      var ids = revids.join('|'),
-        params = {
-          action: 'revisiondelete',
-          type: 'revision',
-          ids: ids,
-          format: 'json',
-          hide: 'user',
-          reason: reason,
-      };
-      AjxAT.Api.postWithToken('csrf', params).done(function(data) {
-        showmsg($.i18n( 'ajxATdialog-success-revdeluser-revs' ), false, 'revdeluser-revs');
-        input_disability(false);
-      } ).fail(function(data) {
-        showApiErr(params, data, 'revdeluser-revs');
-        input_disability(false);
-        return;
+      return new Promise(function(result) {
+        showmsg($.i18n( 'ajxATdialog-execute-block-revdeluser-revs' ), false, 'revdeluser-revs');
+        var ids = revids.join('|'),
+          params = {
+            action: 'revisiondelete',
+            type: 'revision',
+            ids: ids,
+            format: 'json',
+            hide: 'user',
+            reason: reason,
+        };
+        AjxAT.Api.postWithToken('csrf', params).done(function(data) {
+          showmsg($.i18n( 'ajxATdialog-success-revdeluser-revs' ), false, 'revdeluser-revs');
+          result(['revdel','done']);
+        } ).fail(function(data) {
+          showApiErr(params, data, 'revdeluser-revs');
+          result(['revdel','fail']);
+          return;
+        });
       });
     }
     function rmUNfromLogs(logids, reason, hidetype, id){
-      showmsg($.i18n('ajxATdialog-execute-block-revdeluser-logs-' + id), false, 'revdeluser-log-' + id);
-      var ids = logids.join('|'),
-        params = {
-          action: 'revisiondelete',
-          type: 'logging',
-          ids: ids,
-          format: 'json',
-          hide: hidetype,
-          reason: reason,
-      };
-      AjxAT.Api.postWithToken('csrf', params).done(function(data) {
-        showmsg($.i18n('ajxATdialog-success-revdeluser-logs-' + id), false, 'revdeluser-log-' + id);
-        input_disability(false);
-      } ).fail(function(data) {
-        showApiErr(params, data, 'revdeluser-log-' + id);
-        input_disability(false);
-        return;
+      return new Promise(function(result) {
+        showmsg($.i18n('ajxATdialog-execute-block-revdeluser-logs-' + id), false, 'revdeluser-log-' + id);
+        var ids = logids.join('|'),
+          params = {
+            action: 'revisiondelete',
+            type: 'logging',
+            ids: ids,
+            format: 'json',
+            hide: hidetype,
+            reason: reason,
+        };
+        AjxAT.Api.postWithToken('csrf', params).done(function(data) {
+          showmsg($.i18n('ajxATdialog-success-revdeluser-logs-' + id), false, 'revdeluser-log-' + id);
+          result(['logdel'+id,'done']);
+        } ).fail(function(data) {
+          result(['logdel'+id,'fail']);
+          showApiErr(params, data, 'revdeluser-log-' + id);
+          return;
+        });
       });
     }
 
