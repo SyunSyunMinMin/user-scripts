@@ -576,8 +576,9 @@ $(function() {
       }
       var new_msg = `<span style="color: ${isErr?'red':'blue'};">${content}</span>`;
       if (typeof id !== 'undefined') {
-        id = "#ajxATdialog-status-" + id;
+        id = "ajxATdialog-status-" + id;
         new_msg = `<div id=${id}>${new_msg}</div>`;
+        id = "#" + id;
         if ($(id).length) {
           $(id).html(new_msg);
           return;
@@ -639,7 +640,7 @@ $(function() {
       if ($('#ajxATdialog-block-opt-auto').prop('checked')) params.autoblock = 1;
       if (!$('#ajxATdialog-block-opt-hard').prop('checked')) params.anononly = 1;
       AjxAT.Api.postWithToken( 'csrf', params ).done( function ( data ) {
-        showmsg($.i18n( 'ajxATdialog-success-block' ), false);
+        showmsg($.i18n( 'ajxATdialog-success-block' ), false, 'block');
         if ($("#ajxATdialog-block-revdeluser").prop("checked")) rmUserName();
         input_disability(false);
       } ).fail( function ( data ) {
@@ -770,7 +771,7 @@ $(function() {
         formatversion: "2"
       };
       AjxAT.Api.postWithToken( 'csrf', params ).done( function ( data ) {
-        showmsg($.i18n( 'ajxATdialog-success-delete' ), false);
+        showmsg($.i18n( 'ajxATdialog-success-delete' ), false, 'delete');
         input_disability(false);
       } ).fail( function ( data ) {
         showApiErr(params, data, 'delete');
@@ -807,7 +808,7 @@ $(function() {
         formatversion: "2"
       };
       AjxAT.Api.postWithToken( 'csrf', params ).done( function ( data ) {
-        showmsg($.i18n( 'ajxATdialog-success-protect' ), false);
+        showmsg($.i18n( 'ajxATdialog-success-protect' ), false, 'protect');
         input_disability(false);
       } ).fail( function ( data ) {
         showApiErr(params, data, 'protect');
