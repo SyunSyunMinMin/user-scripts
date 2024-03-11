@@ -684,7 +684,7 @@ $(function() {
       	var revisions = data.query.allrevisions,
           logs1 = data.query.logevents,
           revids = [],
-          logids = [];
+          logids1 = [];
         for (var r in revisions) {
           for (var rp in revisions[r].revisions) {
             revids.push(revisions[r].revisions[rp].revid);
