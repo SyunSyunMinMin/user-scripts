@@ -1,6 +1,6 @@
 // <nowiki>
 $(function() {
-  mw.loader.using( [ 'mediawiki.util', 'jquery.i18n', 'jquery.ui', 'oojs-ui-core', 'oojs-ui-widgets' ], function () {
+  mw.loader.using( [ 'mediawiki.util', 'jquery.i18n', 'jquery.ui' ], function () {
     /* 国際化ここから */
     $.i18n( { locale: mw.config.get('wgUserLanguage') } );
     $.i18n().load( {
