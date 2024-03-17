@@ -74,6 +74,10 @@ $(function() {
         'ajxATdialog-suffix-pls': 'Please select as needed',
         'ajxATdialog-suffix-gs': 'Global sysop',
         'ajxATdialog-target-page' : 'Target page',
+        'ajxATdialog-target-page-link-abuselog' : 'abuselog',
+        'ajxATdialog-target-page-link-hist' : 'history',
+        'ajxATdialog-target-page-link-log' : 'log',
+        'ajxATdialog-target-page-link-wlh' : 'What Links Here',
         'ajxATdialog-target-user' : 'Target user',
         'ajxATdialog-target-user-link-abuselog' : 'abuselog',
         'ajxATdialog-target-user-link-blog' : 'block log',
@@ -156,6 +160,10 @@ $(function() {
         'ajxATdialog-suffix-pls': '必要に応じて選択してください',
         'ajxATdialog-suffix-gs': 'グローバル管理者',
         'ajxATdialog-target-page' : '対象ページ',
+        'ajxATdialog-target-page-link-abuselog' : 'フィルター記録',
+        'ajxATdialog-target-page-link-hist' : '履歴',
+        'ajxATdialog-target-page-link-log' : '記録',
+        'ajxATdialog-target-page-link-wlh' : 'リンク元',
         'ajxATdialog-target-user' : '対象利用者',
         'ajxATdialog-target-user-link-abuselog' : 'フィルター記録',
         'ajxATdialog-target-user-link-blog' : 'ブロック記録',
@@ -344,6 +352,8 @@ $(function() {
         localReasons();
         wikisets();
         changeMode();
+        setBlockOpt();
+        setProtectOpt();
       }
 		} );
 
@@ -482,10 +492,13 @@ $(function() {
       }
     });
 
-    /* IP/アカウント判定 */
     $( '#ajxATdialog-target-user' ).change(function(){
       setBlockOpt();
     });
+    $( '#ajxATdialog-target-page' ).change(function(){
+      setProtectOpt();
+    });
+    /* IP/アカウント判定 */
     function setBlockOpt() {
       var target = $( '#ajxATdialog-target-user' ).val();
       if ($("#ajxATdialog-block-expiration").val() !== "other") $("#ajxATdialog-block-expiration-other").prop("disabled", true);
@@ -527,7 +540,7 @@ $(function() {
           <li><a href='${mw.util.getUrl('Special:AbuseLog',{wpSearchUser: target})}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-abuselog')}</a></li>
           <li><a href='${mw.util.getUrl(':m:Special:CentralAuth/',{wpSearchUser: target})}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-ca')}</a></li>`;
       }
-      links += '</ul>'
+      links += '</ul>';
       $("#ajxATdialog-target-user-links").html(links);
       $(".ajxATdialog-target-links").css({'display': 'flex','list-style': 'none', 'width': '90%'});
       $(".ajxATdialog-target-links > li + li").css({'border-left': '1px solid #333','margin-left': '3px', 'padding-left': '3px'});
@@ -542,13 +555,14 @@ $(function() {
       }
     });
 
+
+
     /* 保護オプション設定 */
-    $( '#ajxATdialog-target-page' ).change(function(){
-      setProtectOpt();
-    });
     function setProtectOpt(){
       var target = $( '#ajxATdialog-target-page' ).val();
       if (!target) return;
+      if (AjxAT.targetPage == target) return;
+      var links = "";
       AjxAT.Api.get({
       	"action": "query",
       	"format": "json",
@@ -557,8 +571,21 @@ $(function() {
       	"formatversion": "2",
       	"inprop": "protection"
       }).done(function (data) {
-        var cur = data.query.pages[0].protection;
-        var types = data.query.pages[0].restrictiontypes;
+        var cur = data.query.pages[0].protection,
+          types = data.query.pages[0].restrictiontypes;
+        if (!('missing' in data.query.pages[0])) {
+          links += `<li><a href='${mw.util.getUrl('Special:PageHistory/' + target)}' target='_blank'>${$.i18n('ajxATdialog-target-page-link-hist')}</a></li>`;
+        }
+        links = `<ul class="ajxATdialog-target-links">
+        ${links}
+        <li><a href='${mw.util.getUrl('Special:Log',{page: target})}' target='_blank'>${$.i18n('ajxATdialog-target-page-link-log')}</a></li>
+        <li><a href='${mw.util.getUrl('Special:AbuseLog',{wpSearchTitle: target})}' target='_blank'>${$.i18n('ajxATdialog-target-page-link-abuselog')}</a></li>
+        <li><a href='${mw.util.getUrl('Special:WhatLinksHere/' + target)}' target='_blank'>${$.i18n('ajxATdialog-target-page-link-wlh')}</a></li>
+        </ul>`;
+        $("#ajxATdialog-target-page-links").html(links);
+        $(".ajxATdialog-target-links").css({'display': 'flex','list-style': 'none', 'width': '90%'});
+        $(".ajxATdialog-target-links > li + li").css({'border-left': '1px solid #333','margin-left': '3px', 'padding-left': '3px'});
+
         if (cur.length == 0) {}
         types = types.filter((action) => ['edit', 'move', 'create'].includes(action));
         AjxAT.Restr = types;
@@ -571,7 +598,7 @@ $(function() {
           $(`#ajxATdialog-protect-expiration-${u}`).prop("disabled", false);
           if ($(`#ajxATdialog-protect-expiration-${u}`).val() == "other") $(`#ajxATdialog-protect-expiration-${u}-other`).prop("disabled", false);
         });
-
+        AjxAT.targetPage = target;
       });
     }
 
