@@ -75,6 +75,15 @@ $(function() {
         'ajxATdialog-suffix-gs': 'Global sysop',
         'ajxATdialog-target-page' : 'Target page',
         'ajxATdialog-target-user' : 'Target user',
+        'ajxATdialog-target-user-link-abuselog' : 'abuselog',
+        'ajxATdialog-target-user-link-blog' : 'block log',
+        'ajxATdialog-target-user-link-ca' : 'CA',
+        'ajxATdialog-target-user-link-contribs' : 'contribs',
+        'ajxATdialog-target-user-link-delcontribs' : 'deleted contribs',
+        'ajxATdialog-target-user-link-glbabuselog' : 'global abuseLog',
+        'ajxATdialog-target-user-link-guc' : 'GUC',
+        'ajxATdialog-target-user-link-st' : 'ST',
+        'ajxATdialog-target-user-link-talk' : 'talk',
         'ajxATdialog-title' : 'Ajax Admin Tools',
       },
       'ja' : {
@@ -148,6 +157,15 @@ $(function() {
         'ajxATdialog-suffix-gs': 'グローバル管理者',
         'ajxATdialog-target-page' : '対象ページ',
         'ajxATdialog-target-user' : '対象利用者',
+        'ajxATdialog-target-user-link-abuselog' : 'フィルター記録',
+        'ajxATdialog-target-user-link-blog' : 'ブロック記録',
+        'ajxATdialog-target-user-link-ca' : 'CA',
+        'ajxATdialog-target-user-link-contribs' : '投稿',
+        'ajxATdialog-target-user-link-delcontribs' : '削除された投稿',
+        'ajxATdialog-target-user-link-glbabuselog' : 'グローバルフィルター記録',
+        'ajxATdialog-target-user-link-guc' : 'GUC',
+        'ajxATdialog-target-user-link-st' : 'ST',
+        'ajxATdialog-target-user-link-talk' : '会話',
         'ajxATdialog-title' : 'Ajax Admin Tools',
       },
     } );
@@ -249,9 +267,9 @@ $(function() {
       <table style='width: 100%;'>
       <tr><td><span>${$.i18n( 'ajxATdialog-gswiki' )}</span></td><td><span id='ajxATdialog-gswiki'>${$.i18n( 'ajxATdialog-gswiki-progress' )}</td></tr>
       <tr><td><label for='ajxATdialog-target-user'>${$.i18n( 'ajxATdialog-target-user' )} </label></td>
-        <td><input type='text' style='width: 90%;' id='ajxATdialog-target-user' class='ajxATdialog-input' ${(!!AjxAT.DefaultTargetUser ? 'value="' + AjxAT.DefaultTargetUser + '"':'')} /></td></tr>
+        <td><input type='text' style='width: 90%;' id='ajxATdialog-target-user' class='ajxATdialog-input' ${(!!AjxAT.DefaultTargetUser ? 'value="' + AjxAT.DefaultTargetUser + '"':'')} /><br /><span id='ajxATdialog-target-user-links'></span></td></tr>
       <tr><td><label for='ajxATdialog-target-page'>${$.i18n( 'ajxATdialog-target-page' )} </label></td>
-        <td><input type='text' style='width: 90%;' id='ajxATdialog-target-page' class='ajxATdialog-input' ${(!!AjxAT.DefaultTargetPage ? 'value="' + AjxAT.DefaultTargetPage + '"':'')} /></td></tr>
+        <td><input type='text' style='width: 90%;' id='ajxATdialog-target-page' class='ajxATdialog-input' ${(!!AjxAT.DefaultTargetPage ? 'value="' + AjxAT.DefaultTargetPage + '"':'')} /><br /><span id='ajxATdialog-target-page-links'></span></td></tr>
       <tr><td><label for='ajxATdialog-suffix'>${$.i18n( 'ajxATdialog-suffix' )}</label></td><td><select id='ajxATdialog-suffix' class='ajxATdialog-input'><option value=''>${$.i18n( 'ajxATdialog-suffix-pls' )}</option><option value='${AjxAT.Suffix_GS}'>${$.i18n( 'ajxATdialog-suffix-gs' )}</option></select></td></tr>
       <tr><td><label for='ajxATdialog-mode'>${$.i18n( 'ajxATdialog-mode' )}</label></td><td><select id='ajxATdialog-mode' class='ajxATdialog-input'><option value='block'>${$.i18n( 'ajxATdialog-opt-block' )}</option><option value='delete'>${$.i18n( 'ajxATdialog-opt-delete' )}</option><option value='protect'>${$.i18n( 'ajxATdialog-opt-protect' )}</option></select></td></tr>
       </table>
@@ -474,23 +492,45 @@ $(function() {
       if (!target) {
         $("#ajxATdialog-block-opt-auto").prop("disabled", false);
         $("#ajxATdialog-block-opt-hard").prop("disabled", false);
+        $("#ajxATdialog-target-user-links").html('');
         return;
       }
       var short_target = target.replace(/\/\d{1,2}$/, '');
-      if (
-        mw.util.isIPv4Address( target ) || mw.util.isIPv6Address( target ) ||
-        mw.util.isIPv4Address( short_target ) || mw.util.isIPv6Address( short_target )
-      ) {
+      var links = `<ul class="ajxATdialog-target-links">
+        <li><a href='${mw.util.getUrl('User talk:' + target)}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-talk')}</a></li>
+        <li><a href='${mw.util.getUrl('Special:Contributions/' + target)}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-contribs')}</a></li>
+        <li><a href='https://meta3.toolforge.org/stalktoy/${target}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-st')}</a></li>
+        <li><a href='${mw.util.getUrl('Special:log/block',{page: "User:" + target})}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-blog')}</a></li>
+        `;
+      if (mw.util.isIPv4Address( target ) || mw.util.isIPv6Address( target )) {
         $("#ajxATdialog-block-opt-auto").prop("disabled", true);
         $("#ajxATdialog-block-opt-auto").prop("checked", false);
         $("#ajxATdialog-block-opt-hard").prop("disabled", false);
         $("#ajxATdialog-block-opt-hard").prop("checked", false);
+        links += `<li><a href='${mw.util.getUrl('Special:DeletedContributions/' + target)}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-delcontribs')}</a></li>
+          <li><a href='https://guc.toolforge.org/?user=${target}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-guc')}</a></li>
+          <li><a href='${mw.util.getUrl('Special:AbuseLog',{wpSearchUser: target})}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-abuselog')}</a></li>
+          <li><a href='${mw.util.getUrl(':m:Special:AbuseLog',{wpSearchUser: target})}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-glbabuselog')}</a></li>`;
+      } else if (mw.util.isIPv4Address( short_target ) || mw.util.isIPv6Address( short_target )){
+        $("#ajxATdialog-block-opt-auto").prop("disabled", true);
+        $("#ajxATdialog-block-opt-auto").prop("checked", false);
+        $("#ajxATdialog-block-opt-hard").prop("disabled", false);
+        $("#ajxATdialog-block-opt-hard").prop("checked", false);
+        links += `<li><a href='https://xtools.wmcloud.org/globalcontribs/ipr-${target}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-guc')}</a></li>`;
       } else {
         $("#ajxATdialog-block-opt-auto").prop("disabled", false);
         $("#ajxATdialog-block-opt-auto").prop("checked", true);
         $("#ajxATdialog-block-opt-hard").prop("disabled", true);
         $("#ajxATdialog-block-opt-hard").prop("checked", false);
+        links += `<li><a href='${mw.util.getUrl('Special:DeletedContributions/' + target)}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-delcontribs')}</a></li>
+          <li><a href='https://guc.toolforge.org/?user=${target}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-guc')}</a></li>
+          <li><a href='${mw.util.getUrl('Special:AbuseLog',{wpSearchUser: target})}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-abuselog')}</a></li>
+          <li><a href='${mw.util.getUrl(':m:Special:CentralAuth/',{wpSearchUser: target})}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-ca')}</a></li>`;
       }
+      links += '</ul>'
+      $("#ajxATdialog-target-user-links").html(links);
+      $(".ajxATdialog-target-links").css({'display': 'flex','list-style': 'none', 'width': '90%'});
+      $(".ajxATdialog-target-links > li + li").css({'border-left': '1px solid #333','margin-left': '3px', 'padding-left': '3px'});
     }
 
     /* revdeluserの理由表示処理 */
