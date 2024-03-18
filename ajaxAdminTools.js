@@ -538,7 +538,7 @@ $(function() {
         links += `<li><a href='${mw.util.getUrl('Special:DeletedContributions/' + target)}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-delcontribs')}</a></li>
           <li><a href='https://guc.toolforge.org/?user=${target}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-guc')}</a></li>
           <li><a href='${mw.util.getUrl('Special:AbuseLog',{wpSearchUser: target})}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-abuselog')}</a></li>
-          <li><a href='${mw.util.getUrl(':m:Special:CentralAuth/',{wpSearchUser: target})}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-ca')}</a></li>`;
+          <li><a href='${mw.util.getUrl(':m:Special:CentralAuth/' + target)}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-ca')}</a></li>`;
       }
       links += '</ul>';
       $("#ajxATdialog-target-user-links").html(links);
