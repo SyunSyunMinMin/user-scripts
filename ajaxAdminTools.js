@@ -83,8 +83,8 @@ $(function() {
         'ajxATdialog-target-user-link-blog' : 'block log',
         'ajxATdialog-target-user-link-ca' : 'CA',
         'ajxATdialog-target-user-link-contribs' : 'contribs',
-        'ajxATdialog-target-user-link-delcontribs' : 'deleted contribs',
-        'ajxATdialog-target-user-link-glbabuselog' : 'global abuseLog',
+        'ajxATdialog-target-user-link-delcontribs' : 'deleted',
+        'ajxATdialog-target-user-link-glbabuselog' : 'global',
         'ajxATdialog-target-user-link-guc' : 'GUC',
         'ajxATdialog-target-user-link-st' : 'ST',
         'ajxATdialog-target-user-link-talk' : 'talk',
@@ -169,8 +169,8 @@ $(function() {
         'ajxATdialog-target-user-link-blog' : 'ブロック記録',
         'ajxATdialog-target-user-link-ca' : 'CA',
         'ajxATdialog-target-user-link-contribs' : '投稿',
-        'ajxATdialog-target-user-link-delcontribs' : '削除された投稿',
-        'ajxATdialog-target-user-link-glbabuselog' : 'グローバルフィルター記録',
+        'ajxATdialog-target-user-link-delcontribs' : '削除済',
+        'ajxATdialog-target-user-link-glbabuselog' : 'グローバル',
         'ajxATdialog-target-user-link-guc' : 'GUC',
         'ajxATdialog-target-user-link-st' : 'ST',
         'ajxATdialog-target-user-link-talk' : '会話',
@@ -352,8 +352,8 @@ $(function() {
         localReasons();
         wikisets();
         changeMode();
-        setBlockOpt();
-        setProtectOpt();
+        setTGTUserOpt();
+        setTGTPageOpt();
       }
 		} );
 
@@ -371,7 +371,7 @@ $(function() {
           $('#ajxATdialog-block').removeAttr('style');
           $('#ajxATdialog-delete').attr('style', 'display:none;');
           $('#ajxATdialog-protect').attr('style', 'display:none;');
-          setBlockOpt();
+          setTGTUserOpt();
           break;
 
         case 'delete':
@@ -388,7 +388,7 @@ $(function() {
           $('#ajxATdialog-protect').removeAttr('style');
           $('#ajxATdialog-block').attr('style', 'display:none;');
           $('#ajxATdialog-delete').attr('style', 'display:none;');
-          setProtectOpt();
+          setTGTPageOpt();
           break;
         default:
         return;
@@ -493,13 +493,13 @@ $(function() {
     });
 
     $( '#ajxATdialog-target-user' ).change(function(){
-      setBlockOpt();
+      setTGTUserOpt();
     });
     $( '#ajxATdialog-target-page' ).change(function(){
-      setProtectOpt();
+      setTGTPageOpt();
     });
     /* IP/アカウント判定 */
-    function setBlockOpt() {
+    function setTGTUserOpt() {
       var target = $( '#ajxATdialog-target-user' ).val();
       if ($("#ajxATdialog-block-expiration").val() !== "other") $("#ajxATdialog-block-expiration-other").prop("disabled", true);
       if (!target) {
@@ -511,7 +511,6 @@ $(function() {
       var short_target = target.replace(/\/\d{1,2}$/, '');
       var links = `<ul class="ajxATdialog-target-links">
         <li><a href='${mw.util.getUrl('User talk:' + target)}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-talk')}</a></li>
-        <li><a href='${mw.util.getUrl('Special:Contributions/' + target)}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-contribs')}</a></li>
         <li><a href='https://meta3.toolforge.org/stalktoy/${target}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-st')}</a></li>
         <li><a href='${mw.util.getUrl('Special:log/block',{page: "User:" + target})}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-blog')}</a></li>
         `;
@@ -520,25 +519,28 @@ $(function() {
         $("#ajxATdialog-block-opt-auto").prop("checked", false);
         $("#ajxATdialog-block-opt-hard").prop("disabled", false);
         $("#ajxATdialog-block-opt-hard").prop("checked", false);
-        links += `<li><a href='${mw.util.getUrl('Special:DeletedContributions/' + target)}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-delcontribs')}</a></li>
+        links += `<li><a href='${mw.util.getUrl('Special:Contributions/' + target)}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-contribs')}</a>
+            <sup>(<a href='${mw.util.getUrl('Special:DeletedContributions/' + target)}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-delcontribs')}</a>)</sup></li>
           <li><a href='https://guc.toolforge.org/?user=${target}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-guc')}</a></li>
-          <li><a href='${mw.util.getUrl('Special:AbuseLog',{wpSearchUser: target})}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-abuselog')}</a></li>
-          <li><a href='${mw.util.getUrl(':m:Special:AbuseLog',{wpSearchUser: target})}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-glbabuselog')}</a></li>`;
+          <li><a href='${mw.util.getUrl('Special:AbuseLog',{wpSearchUser: target})}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-abuselog')}</a>
+            <sup>(<a href='${mw.util.getUrl(':m:Special:AbuseLog',{wpSearchUser: target})}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-glbabuselog')}</a>)</sup></li>`;
       } else if (mw.util.isIPv4Address( short_target ) || mw.util.isIPv6Address( short_target )){
         $("#ajxATdialog-block-opt-auto").prop("disabled", true);
         $("#ajxATdialog-block-opt-auto").prop("checked", false);
         $("#ajxATdialog-block-opt-hard").prop("disabled", false);
         $("#ajxATdialog-block-opt-hard").prop("checked", false);
-        links += `<li><a href='https://xtools.wmcloud.org/globalcontribs/ipr-${target}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-guc')}</a></li>`;
+        links += `<li><a href='${mw.util.getUrl('Special:Contributions/' + target)}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-contribs')}</a></li>
+          <li><a href='https://xtools.wmcloud.org/globalcontribs/ipr-${target}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-guc')}</a></li>`;
       } else {
         $("#ajxATdialog-block-opt-auto").prop("disabled", false);
         $("#ajxATdialog-block-opt-auto").prop("checked", true);
         $("#ajxATdialog-block-opt-hard").prop("disabled", true);
         $("#ajxATdialog-block-opt-hard").prop("checked", false);
-        links += `<li><a href='${mw.util.getUrl('Special:DeletedContributions/' + target)}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-delcontribs')}</a></li>
+        links += `<li><a href='${mw.util.getUrl('Special:Contributions/' + target)}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-contribs')}</a>
+            <sup>(<a href='${mw.util.getUrl('Special:DeletedContributions/' + target)}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-delcontribs')}</a>)</sup></li>
           <li><a href='https://guc.toolforge.org/?user=${target}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-guc')}</a></li>
-          <li><a href='${mw.util.getUrl('Special:AbuseLog',{wpSearchUser: target})}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-abuselog')}</a></li>
-          <li><a href='${mw.util.getUrl(':m:Special:CentralAuth/' + target)}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-ca')}</a></li>`;
+          <li><a href='${mw.util.getUrl('Special:AbuseLog',{wpSearchUser: target})}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-abuselog')}</a>
+            <sup>(<a href='${mw.util.getUrl(':m:Special:AbuseLog',{wpSearchUser: target})}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-glbabuselog')}</a>)</sup></li>`;
       }
       links += '</ul>';
       $("#ajxATdialog-target-user-links").html(links);
@@ -558,7 +560,7 @@ $(function() {
 
 
     /* 保護オプション設定 */
-    function setProtectOpt(){
+    function setTGTPageOpt(){
       var target = $( '#ajxATdialog-target-page' ).val();
       if (!target) return;
       if (AjxAT.targetPage == target) return;
@@ -628,8 +630,8 @@ $(function() {
         $(o).prop("disabled", isSet);
       });
       if (!isSet) {
-        setBlockOpt();
-        setProtectOpt();
+        setTGTUserOpt();
+        setTGTPageOpt();
       }
     }
 
