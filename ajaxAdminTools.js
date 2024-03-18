@@ -7,6 +7,7 @@ $(function() {
       'en' : {
         'ajxAT-portlet-detail' : 'Open the admin tools menu',
         'ajxAT-portlet-link' : 'AdminTools',
+        'ajxATdialog-abort': 'Aborted.',
         'ajxATdialog-block-caption' : 'Block',
         'ajxATdialog-block-opt-account' : 'Account creation',
         'ajxATdialog-block-opt-auto' : 'Auto block',
@@ -16,6 +17,10 @@ $(function() {
         'ajxATdialog-block-revdeluser': 'Remove username from revisions/logs',
         'ajxATdialog-block-revdeluser-reason': 'Reason for removing username',
         'ajxATdialog-cancel' : 'Cancel',
+        'ajxATdialog-conf': 'It contains actions that require caution to execute. Are you sure you want to execute it?',
+        'ajxATdialog-conf-block-self': 'You are trying to block yourself.',
+        'ajxATdialog-conf-block-revdel': 'You are trying to remove username. If you make a mistake, it will tire you out to revert.',
+        'ajxATdialog-conf-block-revdelIP': 'You are trying to revdel IP address. Do you really need to?',
         'ajxATdialog-delete-caption' : 'Delete',
         'ajxATdialog-err-block-expiry-other': 'If you want to block other duration, please specify in the additional box next to it.',
         'ajxATdialog-err-block-reason-other': 'Please select or input the reason for blocking.',
@@ -93,6 +98,7 @@ $(function() {
       'ja' : {
         'ajxAT-portlet-detail' : '管理者ツールメニューを開く',
         'ajxAT-portlet-link' : '管理者ツール',
+        'ajxATdialog-abort': '中止しました。',
         'ajxATdialog-block-caption' : 'ブロック',
         'ajxATdialog-block-opt-account' : 'アカウント作成',
         'ajxATdialog-block-opt-auto' : '自動ブロック',
@@ -102,6 +108,10 @@ $(function() {
         'ajxATdialog-block-revdeluser': '版/記録から利用者名を除去',
         'ajxATdialog-block-revdeluser-reason': '利用者名の除去理由',
         'ajxATdialog-cancel' : '中止',
+        'ajxATdialog-conf': '注意が必要な操作が含まれています。本当に実行してもいいですか？',
+        'ajxATdialog-conf-block-self': '自分自身をブロックしようとしています。',
+        'ajxATdialog-conf-block-revdel': '利用者名を除去しようとしています。もし間違えた場合、戻すのは骨が折れるでしょう。',
+        'ajxATdialog-conf-block-revdelIP': 'あなたはIPアドレスを隠そうとしています。本当にする必要がありますか？',
         'ajxATdialog-delete-caption' : '削除',
         'ajxATdialog-err-block-expiry-other': 'その他の期間ブロックしたい場合、横のボックスに期間を入力してください。',
         'ajxATdialog-err-block-reason-other': 'ブロックする理由を選択または入力してください。',
@@ -193,6 +203,7 @@ $(function() {
       Suffix_GS: ' ([[:m:Special:MyLanguage/GS|global sysop]] action)',
       PageName: mw.config.get( 'wgPageName' ),
       RelevantUserName: mw.config.get( 'wgRelevantUserName' ),
+      UserName: mw.config.get('wgUserName'),
       UserRelated: (mw.config.get( 'wgRelevantUserName' ) === null ? false : true),
     };
     if (AjxAT.UserRelated) {/* 利用者関係のとき => ブロック*/
@@ -499,6 +510,18 @@ $(function() {
       setTGTPageOpt();
     });
     /* IP/アカウント判定 */
+    function isIPAddress(user) {
+      var short_user = user.replace(/\/\d{1,2}$/, '');
+      if (mw.util.isIPv4Address( user ) || mw.util.isIPv6Address( user )) {
+        return 'single';
+      }
+      else if (mw.util.isIPv4Address( short_user ) || mw.util.isIPv6Address( short_user )) {
+        return 'range';
+      } else {
+        return false;
+      }
+    }
+
     function setTGTUserOpt(init) {
       if (init === undefined) {
         init = false;
@@ -512,23 +535,20 @@ $(function() {
         $("#ajxATdialog-target-user-links").html('');
         return;
       }
-      var short_target = target.replace(/\/\d{1,2}$/, '');
+      var isIP = isIPAddress(target);
       var links = `<ul class="ajxATdialog-target-links">
         <li><a href='${mw.util.getUrl('User talk:' + target)}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-talk')}</a></li>
         <li><a href='https://meta3.toolforge.org/stalktoy/${target}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-st')}</a></li>
         <li><a href='${mw.util.getUrl('Special:log/block',{page: "User:" + target})}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-blog')}</a></li>
         `;
-      if (
-        mw.util.isIPv4Address( target ) || mw.util.isIPv6Address( target ) ||
-        mw.util.isIPv4Address( short_target ) || mw.util.isIPv6Address( short_target )
-      ) {
+      if (isIP) {
         $("#ajxATdialog-block-opt-auto").prop("disabled", true);
         $("#ajxATdialog-block-opt-auto").prop("checked", false);
         $("#ajxATdialog-block-opt-hard").prop("disabled", false);
         $("#ajxATdialog-block-opt-hard").prop("checked", false);
         if (init) $('#ajxATdialog-block-expiration').val('31 hours');
 
-        if (mw.util.isIPv4Address( target ) || mw.util.isIPv6Address( target )) {
+        if (isIP == 'single') {
           links += `<li><a href='${mw.util.getUrl('Special:Contributions/' + target)}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-contribs')}</a>
               <sup>(<a href='${mw.util.getUrl('Special:DeletedContributions/' + target)}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-delcontribs')}</a>)</sup></li>
             <li><a href='https://guc.toolforge.org/?user=${target}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-guc')}</a></li>
@@ -689,7 +709,9 @@ $(function() {
     /* ブロック実行 */
     function execute_block() {
       showmsg($.i18n('ajxATdialog-execute-block'),false,'block');
-      var expiry;
+      var expiry,
+        target = $('#ajxATdialog-target-user').val(),
+        revdeluser = $("#ajxATdialog-block-revdeluser").prop("checked");
       if ($( '#ajxATdialog-block-expiration' ).val() == 'other' && $('#ajxATdialog-block-expiration-other').val() == '') {
         showmsg($.i18n( 'ajxATdialog-err-block-expiry-other' ), true,'block');
         input_disability(false);
@@ -700,17 +722,35 @@ $(function() {
         input_disability(false);
         return;
       }
-      if ($("#ajxATdialog-block-revdeluser").prop("checked") && $( '#ajxATdialog-block-revdeluser-reason' ).val() == '' && $('#ajxATdialog-block-revdeluser-reason-other').val() == '') {
+      if (revdeluser && $( '#ajxATdialog-block-revdeluser-reason' ).val() == '' && $('#ajxATdialog-block-revdeluser-reason-other').val() == '') {
         showmsg($.i18n( 'ajxATdialog-err-block-revdeluser-reason-other' ), true,'block');
         input_disability(false);
         return;
       }
+
+      /* 確認の必要な操作 */
+      var confirmList = [];
+      if (AjxAT.UserName == target) confirmList.push($.i18n( 'ajxATdialog-conf-block-self' ));
+      if (revdeluser) confirmList.push($.i18n( 'ajxATdialog-conf-block-revdel' ));
+      if (isIPAddress(target)) confirmList.push($.i18n( 'ajxATdialog-conf-block-revdelIP' ));
+      if (confirmList.length) {
+        var confirmText = $.i18n( 'ajxATdialog-conf' ) + '\r\n';
+        confirmList.forEach(function(i){
+          confirmText += '\r\n* ' + i;
+        });
+        if (!window.confirm(confirmText)) {
+          showmsg($.i18n( 'ajxATdialog-abort' ), true, 'block');
+          input_disability(false);
+          return
+        }
+      }
+
       var reason = $( '#ajxATdialog-block-reason' ).val();
       if ($( '#ajxATdialog-block-reason' ).val() && $( '#ajxATdialog-block-reason-other' ).val()) reason += ': ';
       reason += $( '#ajxATdialog-block-reason-other' ).val() + $('#ajxATdialog-suffix').val();
       var params = {
         action: "block",
-        user:$( '#ajxATdialog-target-user' ).val(),
+        user:target,
         expiry:(($( '#ajxATdialog-block-expiration' ).val() == 'other') ? $('#ajxATdialog-block-expiration-other').val() : $( '#ajxATdialog-block-expiration' ).val()),
         reason:reason,
         format: 'json',
@@ -723,7 +763,7 @@ $(function() {
       if (!$('#ajxATdialog-block-opt-hard').prop('checked')) params.anononly = 1;
       AjxAT.Api.postWithToken( 'csrf', params ).done( function ( data ) {
         showmsg($.i18n( 'ajxATdialog-success-block' ), false, 'block');
-        ($("#ajxATdialog-block-revdeluser").prop("checked"))? rmUserName(): input_disability(false);
+        (revdeluser)? rmUserName(): input_disability(false);
       } ).fail( function ( data ) {
         showApiErr(params, data, 'block');
         input_disability(false);
