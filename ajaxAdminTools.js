@@ -352,8 +352,8 @@ $(function() {
         localReasons();
         wikisets();
         changeMode();
-        setTGTUserOpt();
-        setTGTPageOpt();
+        setTGTUserOpt(true);
+        setTGTPageOpt(true);
       }
 		} );
 
@@ -499,7 +499,11 @@ $(function() {
       setTGTPageOpt();
     });
     /* IP/アカウント判定 */
-    function setTGTUserOpt() {
+    function setTGTUserOpt(init) {
+      if (init === undefined) {
+        init = false;
+      }
+
       var target = $( '#ajxATdialog-target-user' ).val();
       if ($("#ajxATdialog-block-expiration").val() !== "other") $("#ajxATdialog-block-expiration-other").prop("disabled", true);
       if (!target) {
@@ -514,28 +518,33 @@ $(function() {
         <li><a href='https://meta3.toolforge.org/stalktoy/${target}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-st')}</a></li>
         <li><a href='${mw.util.getUrl('Special:log/block',{page: "User:" + target})}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-blog')}</a></li>
         `;
-      if (mw.util.isIPv4Address( target ) || mw.util.isIPv6Address( target )) {
+      if (
+        mw.util.isIPv4Address( target ) || mw.util.isIPv6Address( target ) ||
+        mw.util.isIPv4Address( short_target ) || mw.util.isIPv6Address( short_target )
+      ) {
         $("#ajxATdialog-block-opt-auto").prop("disabled", true);
         $("#ajxATdialog-block-opt-auto").prop("checked", false);
         $("#ajxATdialog-block-opt-hard").prop("disabled", false);
         $("#ajxATdialog-block-opt-hard").prop("checked", false);
-        links += `<li><a href='${mw.util.getUrl('Special:Contributions/' + target)}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-contribs')}</a>
-            <sup>(<a href='${mw.util.getUrl('Special:DeletedContributions/' + target)}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-delcontribs')}</a>)</sup></li>
-          <li><a href='https://guc.toolforge.org/?user=${target}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-guc')}</a></li>
-          <li><a href='${mw.util.getUrl('Special:AbuseLog',{wpSearchUser: target})}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-abuselog')}</a>
-            <sup>(<a href='${mw.util.getUrl(':m:Special:AbuseLog',{wpSearchUser: target})}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-glbabuselog')}</a>)</sup></li>`;
-      } else if (mw.util.isIPv4Address( short_target ) || mw.util.isIPv6Address( short_target )){
-        $("#ajxATdialog-block-opt-auto").prop("disabled", true);
-        $("#ajxATdialog-block-opt-auto").prop("checked", false);
-        $("#ajxATdialog-block-opt-hard").prop("disabled", false);
-        $("#ajxATdialog-block-opt-hard").prop("checked", false);
-        links += `<li><a href='${mw.util.getUrl('Special:Contributions/' + target)}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-contribs')}</a></li>
-          <li><a href='https://xtools.wmcloud.org/globalcontribs/ipr-${target}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-guc')}</a></li>`;
+        if (init) $('#ajxATdialog-block-expiration').val('31 hours');
+
+        if (mw.util.isIPv4Address( target ) || mw.util.isIPv6Address( target )) {
+          links += `<li><a href='${mw.util.getUrl('Special:Contributions/' + target)}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-contribs')}</a>
+              <sup>(<a href='${mw.util.getUrl('Special:DeletedContributions/' + target)}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-delcontribs')}</a>)</sup></li>
+            <li><a href='https://guc.toolforge.org/?user=${target}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-guc')}</a></li>
+            <li><a href='${mw.util.getUrl('Special:AbuseLog',{wpSearchUser: target})}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-abuselog')}</a>
+              <sup>(<a href='${mw.util.getUrl(':m:Special:AbuseLog',{wpSearchUser: target})}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-glbabuselog')}</a>)</sup></li>`;
+        } else {
+          links += `<li><a href='${mw.util.getUrl('Special:Contributions/' + target)}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-contribs')}</a></li>
+            <li><a href='https://xtools.wmcloud.org/globalcontribs/ipr-${target}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-guc')}</a></li>`;
+        }
       } else {
         $("#ajxATdialog-block-opt-auto").prop("disabled", false);
         $("#ajxATdialog-block-opt-auto").prop("checked", true);
         $("#ajxATdialog-block-opt-hard").prop("disabled", true);
         $("#ajxATdialog-block-opt-hard").prop("checked", false);
+        if (init) $('#ajxATdialog-block-expiration').val('infinite');
+
         links += `<li><a href='${mw.util.getUrl('Special:Contributions/' + target)}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-contribs')}</a>
             <sup>(<a href='${mw.util.getUrl('Special:DeletedContributions/' + target)}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-delcontribs')}</a>)</sup></li>
           <li><a href='https://guc.toolforge.org/?user=${target}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-guc')}</a></li>
@@ -560,7 +569,11 @@ $(function() {
 
 
     /* 保護オプション設定 */
-    function setTGTPageOpt(){
+    function setTGTPageOpt(init){
+      if (init === undefined) {
+        init = false;
+      }
+
       var target = $( '#ajxATdialog-target-page' ).val();
       if (!target) return;
       if (AjxAT.targetPage == target) return;
