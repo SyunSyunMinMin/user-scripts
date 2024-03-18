@@ -568,8 +568,7 @@ $(function() {
         links += `<li><a href='${mw.util.getUrl('Special:Contributions/' + target)}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-contribs')}</a>
             <sup>(<a href='${mw.util.getUrl('Special:DeletedContributions/' + target)}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-delcontribs')}</a>)</sup></li>
           <li><a href='https://guc.toolforge.org/?user=${target}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-guc')}</a></li>
-          <li><a href='${mw.util.getUrl('Special:AbuseLog',{wpSearchUser: target})}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-abuselog')}</a>
-            <sup>(<a href='${mw.util.getUrl(':m:Special:AbuseLog',{wpSearchUser: target})}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-glbabuselog')}</a>)</sup></li>`;
+          <li><a href='${mw.util.getUrl('Special:AbuseLog',{wpSearchUser: target})}' target='_blank'>${$.i18n('ajxATdialog-target-user-link-abuselog')}</a></li>`;
       }
       links += '</ul>';
       $("#ajxATdialog-target-user-links").html(links);
