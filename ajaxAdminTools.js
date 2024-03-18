@@ -740,7 +740,7 @@ $(function() {
         if (!window.confirm(confirmText)) {
           showmsg($.i18n( 'ajxATdialog-abort' ), true, 'block');
           input_disability(false);
-          return
+          return;
         }
       }
 
