@@ -731,7 +731,7 @@ $(function() {
       var confirmList = [];
       if (AjxAT.UserName == target) confirmList.push($.i18n( 'ajxATdialog-conf-block-self' ));
       if (revdeluser) confirmList.push($.i18n( 'ajxATdialog-conf-block-revdel' ));
-      if (isIPAddress(target)) confirmList.push($.i18n( 'ajxATdialog-conf-block-revdelIP' ));
+      if (isIPAddress(target) && revdeluser) confirmList.push($.i18n( 'ajxATdialog-conf-block-revdelIP' ));
       if (confirmList.length) {
         var confirmText = $.i18n( 'ajxATdialog-conf' ) + '\r\n';
         confirmList.forEach(function(i){
